@@ -155,7 +155,7 @@ section{max-width:1060px;margin:0 auto;padding:96px clamp(20px,6vw,72px) 0}
 }
 /* ---------- photo hover info-card (SRH player-card style) ---------- */
 .info-card{
-  position:absolute;inset:0;z-index:2;border-radius:20px;overflow:hidden;
+  position:absolute;inset:0;z-index:2;border-radius:20px;overflow-x:hidden;overflow-y:auto;
   display:flex;flex-direction:column;justify-content:flex-start;padding:20px;
   background:linear-gradient(150deg,rgba(15,23,42,.97) 0%,rgba(23,33,54,.97) 60%,rgba(29,78,216,.28) 130%);
   opacity:0;transform:translateY(14px);transition:opacity .35s ease,transform .35s ease;
@@ -531,10 +531,11 @@ footer{text-align:center;padding:36px 20px 46px;color:var(--muted);font-size:.85
 }
 .adm-brand{color:#fff;font-weight:800;padding:6px 22px 18px;font-size:1.02rem;border-bottom:1px solid #1e293b;margin-bottom:12px}
 .adm-brand small{display:block;color:#64748b;font-weight:500;font-size:.72rem;letter-spacing:1px;margin-top:2px}
+.adm-tabs{display:flex;flex-direction:column}
 .adm-tab{
   display:flex;align-items:center;gap:10px;padding:11px 22px;cursor:pointer;border:none;background:none;
   color:#94a3b8;font-family:inherit;font-size:.9rem;font-weight:500;text-align:left;width:100%;
-  border-left:3px solid transparent;transition:all .2s;
+  border-left:3px solid transparent;transition:all .2s;white-space:nowrap;
 }
 .adm-tab:hover{color:#e2e8f0;background:#131e33}
 .adm-tab.active{color:#fff;background:#16233c;border-left-color:var(--accent)}
@@ -621,12 +622,36 @@ footer{text-align:center;padding:36px 20px 46px;color:var(--muted);font-size:.85
   .nav-links a{padding:13px 26px}
   .nav-links a::after{display:none}
   .burger{display:block}
+  /* --- photo info-card: full-width 2-column details, smaller photo cutout --- */
+  .info-card{padding:16px}
+  .if-rows{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:0 12px;padding-bottom:72px}
+  .if-row b{font-size:.78rem}
+  .photo-frame.show .photo,.photo-frame.show .photo-ph{transform:scale(.3)}
+
+  /* --- admin: top bar with swipeable tab pills + fixed action bar at the bottom --- */
   #admin.open{flex-direction:column}
-  .adm-side{width:100%;flex-direction:row;flex-wrap:wrap;align-items:center;padding:10px}
-  .adm-brand{border:none;padding:6px 12px;margin:0}
-  .adm-tab{width:auto;padding:8px 12px;border-left:none;border-bottom:3px solid transparent}
-  .adm-tab.active{border-left:none;border-bottom-color:var(--accent)}
-  .adm-actions{flex-direction:row;border:none;padding:6px;width:100%}
+  .adm-side{width:100%;flex-direction:column;padding:0;border-right:none;border-bottom:1px solid #1e293b}
+  .adm-brand{border-bottom:none;padding:12px 16px 4px;margin:0}
+  .adm-tabs{
+    flex-direction:row;overflow-x:auto;-webkit-overflow-scrolling:touch;
+    gap:6px;padding:6px 12px 12px;scrollbar-width:none;
+  }
+  .adm-tabs::-webkit-scrollbar{display:none}
+  .adm-tab{
+    flex:0 0 auto;width:auto;padding:8px 14px;font-size:.85rem;
+    border:1px solid #273449;border-radius:999px;
+  }
+  .adm-tab.active{border-color:var(--accent);background:#16233c}
+  .adm-side .spacer{display:none}
+  .adm-actions{
+    position:fixed;left:0;right:0;bottom:0;z-index:5;
+    display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+    background:#0f172a;border-top:1px solid #1e293b;
+  }
+  .adm-actions .save{grid-column:1/-1;padding:13px}
+  .adm-mode{grid-column:1/-1;padding-top:2px}
+  .adm-main{padding-bottom:180px}
   .adm-row{grid-template-columns:1fr}
   .scroll-hint{display:none}
   .cmdk-pill{display:none}
@@ -639,7 +664,7 @@ footer{text-align:center;padding:36px 20px 46px;color:var(--muted);font-size:.85
   #skills .inner{padding-top:56px;padding-bottom:56px}
   .sec-head{margin-bottom:30px}
   #hero{min-height:100svh;padding-top:100px;padding-bottom:44px}
-  .photo-frame{width:min(240px,72vw)}
+  .photo-frame{width:min(280px,80vw)}
   .hero-cta{margin-top:26px}
   .hero-cta .btn{flex:1 1 auto;justify-content:center}
   .hero-socials{margin-top:28px}
@@ -811,14 +836,16 @@ footer{text-align:center;padding:36px 20px 46px;color:var(--muted);font-size:.85
   <!-- panel -->
   <div class="adm-side" id="admSide" style="display:none">
     <div class="adm-brand">Admin Panel<small>PORTFOLIO EDITOR</small></div>
-    <button class="adm-tab" data-tab="profile">👤 Profile &amp; Hero</button>
-    <button class="adm-tab" data-tab="about">📝 About &amp; Stats</button>
-    <button class="adm-tab" data-tab="skills">🛠 Skills</button>
-    <button class="adm-tab" data-tab="projects">📁 Projects</button>
-    <button class="adm-tab" data-tab="education">🎓 Education</button>
-    <button class="adm-tab" data-tab="blog">✍️ Blog</button>
-    <button class="adm-tab" data-tab="contact">📮 Contact &amp; Footer</button>
-    <button class="adm-tab" data-tab="labels">🏷 Headings &amp; Labels</button>
+    <div class="adm-tabs">
+      <button class="adm-tab" data-tab="profile">👤 Profile &amp; Hero</button>
+      <button class="adm-tab" data-tab="about">📝 About &amp; Stats</button>
+      <button class="adm-tab" data-tab="skills">🛠 Skills</button>
+      <button class="adm-tab" data-tab="projects">📁 Projects</button>
+      <button class="adm-tab" data-tab="education">🎓 Education</button>
+      <button class="adm-tab" data-tab="blog">✍️ Blog</button>
+      <button class="adm-tab" data-tab="contact">📮 Contact &amp; Footer</button>
+      <button class="adm-tab" data-tab="labels">🏷 Headings &amp; Labels</button>
+    </div>
     <div class="spacer"></div>
     <div class="adm-actions">
       <button class="abtn save" onclick="saveAll()">💾 Save &amp; Publish</button>
