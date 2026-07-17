@@ -179,6 +179,11 @@ section{max-width:1060px;margin:0 auto;padding:96px clamp(20px,6vw,72px) 0}
   transform:scale(.42);transform-origin:100% 100%;z-index:3;
   filter:drop-shadow(0 14px 28px rgba(0,0,0,.55));
 }
+/* 6+ details: switch to 2 columns across the full card and shrink the
+   photo cutout further, so everything fits without scrolling */
+.photo-frame.many .if-rows{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:0 12px;padding-bottom:76px}
+.photo-frame.many:hover .photo,.photo-frame.many.show .photo,
+.photo-frame.many:hover .photo-ph,.photo-frame.many.show .photo-ph{transform:scale(.3)}
 /* ---------- "open to work" status badge ---------- */
 .status-badge{
   display:inline-flex;align-items:center;gap:8px;margin-bottom:16px;
@@ -1098,6 +1103,7 @@ function renderSite(){
        <div class="if-head">${esc(DATA.hero.name)}<small>${esc(DATA.ui.quickFacts)}</small></div>
        <div class="if-rows">${detRows}</div>
      </div>`;
+  document.querySelector(".photo-frame").classList.toggle("many", (DATA.profile.details||[]).length > 5);
 
   /* resume buttons (hero) — only when a resume exists */
   const resumeSrc = (DATA.resume.data || DATA.resume.url || "").trim();
